@@ -1,7 +1,3 @@
-var hotelLocation = [];
-var restaurantLocations = [];
-var thingToDoLocations = [];
-
 function initialize_gmaps() {
     // initialize new google maps LatLng object
     var myLatlng = new google.maps.LatLng(40.705786,-74.007672);
@@ -24,6 +20,15 @@ function initialize_gmaps() {
     });
     
     // draw some locations
+    var hotelLocation = [40.705137, -74.007624];
+    var restaurantLocations = [
+        [40.705137, -74.013940],
+        [40.708475, -74.010846]
+    ];
+    var thingToDoLocations = [
+        [40.716291, -73.995315],
+        [40.707119, -74.003602]
+    ];
     function drawLocation (location, opts) {
         if (typeof opts !== 'object') {
             opts = {}
