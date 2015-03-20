@@ -39,6 +39,17 @@ body {
 			margin-top: 20px;
 			margin-bottom: 20px;
 		}
+		li {
+			list-style: none;
+			padding-bottom: 5px;
+		}
+		span {
+			display: inline-block;
+			width: 100%;
+			.btn-danger {
+				float: right;
+			}
+		}
 	}
 }
 

@@ -1,33 +1,108 @@
 $(document).ready(function() {
+	// add itinerary item 
+	// show on map
+	var dayDom = {};
+	var saveHotelLocations = {}, saveRestaurantLocations = {}, saveThingLocations = {};
+
 	$('.chooses').click(function (event) {
-		$selectName = $(this).parent().find(':selected').text();
-		console.log($(this));
+		var $btnObj;
+		var $selectName = $(this).parent().find(':selected').text();
+		var liHTML = '<li><span>'+$selectName+'<button class="btn btn-xs btn-danger remove btn-circle">x</button></span></li>';
 		$id = $(this).attr('id');
+		// check if already present in itinerary
+		var isPresent = $('.panel-body').find("span:contains("+$selectName+")");
+		if (isPresent.length === 0) {
+			if ($id === "all_hotels") {
+				all_hotels.forEach(function(x) {
+					if ((x.name) === $selectName) {
+						hotelLocation = x.place[0].location;
+						// hotelData.push(x);
+						// clear list if hotel already exists to update (only one hotel)
+						$('#day-hotel li').remove();
+						$('#day-hotel').append(liHTML);
+						$btnObj = $('#day-hotel').find('li').last().find('.remove');
+					}
+				});
+			} else if($id === "all_restaurants") {
+				all_restaurants.forEach(function(x) {
+					if ((x.name) === $selectName) {
+						restaurantLocations.push(x.place[0].location);
+						$('#day-rest').append(liHTML);
+						$btnObj = $('#day-rest').find('li').last().find('.remove');
+					}
+				});
+			} else if($id === "all_things_to_do") {
+				all_things_to_do.forEach(function(x) {
+					if ((x.name) === $selectName) {
+						thingToDoLocations.push(x.place[0].location);
+						$('#day-things').append(liHTML);
+						$btnObj = $('#day-things').find('li').last().find('.remove');
+					}
+				});
+			} else {
+				console.log("MATRIX");
+			}
+			initialize_gmaps();
 
-		if ($id === "all_hotels") {
-			all_hotels.forEach(function(x) {
-				if ((x.name) === $selectName) {
-					hotelLocation = x.place[0].location;
+			$btnObj.click(function (event) {
+			// this is li elem
+				var $buttonParent = $(this).parents().eq(1);
+				var $itineraryName = $buttonParent.find('button').remove().end().text(); 
+				var $itineraryCategory = $buttonParent.parents().eq(1).find('ul').attr('id');
+				$buttonParent.remove();
+
+				switch($itineraryCategory) {
+					case "day-hotel":
+						hotelLocation = [];
+						console.log('hi');
+						console.log($itineraryName);
+						console.log($itineraryCategory);
+						break;
+					case "day-rest":
+						all_restaurants.forEach(function(x) {
+							if ((x.name) === $itineraryName) {
+								var rIndex = restaurantLocations.indexOf(x.place[0].location);
+								restaurantLocations.splice(rIndex, 1);
+								console.log(rIndex);
+							}
+						});
+						break;
+					case "day-things":
+						all_things_to_do.forEach(function(x) {
+							if ((x.name) === $itineraryName) {
+								var tIndex = thingToDoLocations.indexOf(x.place[0].location);
+								thingToDoLocations.splice(tIndex, 1);
+								console.log(tIndex);
+							}
+						});
+						break;
 				}
+				initialize_gmaps();
 			});
-		} else if($id === "all_restaurants") {
-			all_restaurants.forEach(function(x) {
-				if ((x.name) === $selectName) {
-					restaurantLocations.push(x.place[0].location);
-				}
-			});
-		} else if($id === "all_things_to_do") {
-			all_things_to_do.forEach(function(x) {
-				if ((x.name) === $selectName) {
-					thingToDoLocations.push(x.place[0].location);
-				}
-			});
-		} else {
-			console.log("MATRIX");
+			// adds marker to map 
 		}
+	});
 
-		console.log(hotelLocation);
+	$('#add-day').on('click', function () {
+		// add new day button
+		var dayNum = parseInt($(this).prev().text());
+		$('button').removeClass('current-day');
+		$('#add-day').before('<button class="btn btn-circle day-btn current-day">'+(dayNum+1)+'</button>');
 
+		// scrape and save previous current day's data
+		dayDom[dayNum] = $('#itinerary-panel').html();
+		$('#itinerary-panel').find('li').remove();
+
+		// save map markers
+		saveHotelLocations[dayNum] = hotelLocation; 
+		saveRestaurantLocations[dayNum] = restaurantLocations;
+		saveThingLocations[dayNum] = thingToDoLocations;
+
+		// remove markers from map and refresh (no ajax :()
+		hotelLocation =restaurantLocations=thingToDoLocations = [];
 		initialize_gmaps();
-	})
+
+	}); 
+
+
 });

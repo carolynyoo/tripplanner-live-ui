@@ -124,6 +124,14 @@ body {
     .panel-default .panel-body > div {
       margin-top: 20px;
       margin-bottom: 20px; }
+    .panel-default .panel-body li {
+      list-style: none;
+      padding-bottom: 5px; }
+    .panel-default .panel-body span {
+      display: inline-block;
+      width: 100%; }
+      .panel-default .panel-body span .btn-danger {
+        float: right; }
 
 .btn-primary {
   background: #5f9bc0;
