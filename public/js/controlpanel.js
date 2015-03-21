@@ -85,24 +85,24 @@ $(document).ready(function() {
 
 	$('#add-day').on('click', function () {
 		// add new day button
-		var dayNum = parseInt($(this).prev().text());
-		$('button').removeClass('current-day');
-		$('#add-day').before('<button class="btn btn-circle day-btn current-day">'+(dayNum+1)+'</button>');
-
-		// scrape and save previous current day's data
-		dayDom[dayNum] = $('#itinerary-panel').html();
-		$('#itinerary-panel').find('li').remove();
-
-		// save map markers
-		saveHotelLocations[dayNum] = hotelLocation; 
-		saveRestaurantLocations[dayNum] = restaurantLocations;
-		saveThingLocations[dayNum] = thingToDoLocations;
+		var maximumDayCount = getMaximumDayNum();
+		removeCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
+		$('#add-day').before('<button class="btn btn-circle day-btn current-day">'+(maximumDayCount+1)+'</button>');
+		adjustCurrentDayTitle();
 
 		// remove markers from map and refresh (no ajax :()
 		hotelLocation =restaurantLocations=thingToDoLocations = [];
 		initialize_gmaps();
-
 	}); 
 
+	$(".day-buttons").on('click', '.day-btn', function() {
+		var clickedDay = parseInt($(this).text());
+		if (!isNaN(clickedDay)) {
+			removeCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
+			$(this).addClass('current-day');
+			fetchNewDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
+			adjustCurrentDayTitle();
+		}
+	});
 
 });
