@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	// add itinerary item 
 	// show on map
-	var dayDom = {};
-	var saveHotelLocations = {}, saveRestaurantLocations = {}, saveThingLocations = {};
+	var dayDom = [];
+	var saveHotelLocations = [], saveRestaurantLocations = [], saveThingLocations = [];
 
 	$('.chooses').click(function (event) {
 		var $btnObj;
@@ -86,7 +86,7 @@ $(document).ready(function() {
 	$('#add-day').on('click', function () {
 		// add new day button
 		var maximumDayCount = getMaximumDayNum();
-		removeCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
+		cacheCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
 		$('#add-day').before('<button class="btn btn-circle day-btn current-day">'+(maximumDayCount+1)+'</button>');
 		adjustCurrentDayTitle();
 
@@ -98,11 +98,48 @@ $(document).ready(function() {
 	$(".day-buttons").on('click', '.day-btn', function() {
 		var clickedDay = parseInt($(this).text());
 		if (!isNaN(clickedDay)) {
-			removeCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
+			cacheCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
 			$(this).addClass('current-day');
 			fetchNewDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
 			adjustCurrentDayTitle();
 		}
+	});
+
+	$('#removeDay').on('click', function () {
+			var dayToRemove = getCurrentDayNum(); 
+
+			// remove from cache
+			dayDom.splice(dayToRemove, 1);
+			saveHotelLocations.splice(dayToRemove, 1);
+			saveRestaurantLocations.splice(dayToRemove, 1);
+			saveThingLocations.splice(dayToRemove, 1);
+
+			// remove button
+			var $toRemove = $('.day-buttons').find('.current-day');
+
+			if ($toRemove.next().text() === "+") {
+				$toRemove.prev().addClass('current-day'); 
+			} else {
+				$toRemove.next().addClass('current-day');
+			}
+			$toRemove.remove();
+
+			// loop to rename days 
+			$('.day-btn').each(function (i, elem) {
+				$(elem).text(i+1);
+			});
+
+			$('.day-btn').last().text('+');
+
+			// remove from day title
+			adjustCurrentDayTitle();
+
+
+			if (isNaN(getCurrentDayNum())) {
+				$('#add-day').trigger('click');
+			} else {
+				fetchNewDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom);
+			}
 	});
 
 });

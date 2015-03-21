@@ -10,7 +10,7 @@ function adjustCurrentDayTitle() {
 	var $dayTitle = $('#day-title').find('span').html('Day ' + getCurrentDayNum());
 }
 
-function removeCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom) {
+function cacheCurrentDay(saveHotelLocations, saveRestaurantLocations, saveThingLocations, dayDom) {
 	var dayNum = getCurrentDayNum();
 	$('.current-day').removeClass('current-day');
 	// scrape and save previous current day's data
